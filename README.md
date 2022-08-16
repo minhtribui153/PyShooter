@@ -3,7 +3,7 @@
 
 ![Game](./data/image.png)
 ## About
-A soldier is on a mission to capture the base of the enemy. As commanded by his Sergeant, he has to traverse and eliminate the enemy soldiers as much as he can and capture the bases. Each level is a base the soldier has to capture.
+A soldier is on a mission to capture the base of the enemy. As commanded by his Sergeant, he has to traverse obstacles and eliminate the enemy soldiers as much as he can and capture the bases. Each level is a base the soldier has to capture.
 
 ## Keyboard Controls
 | Keybind 	    | Uses              	|
