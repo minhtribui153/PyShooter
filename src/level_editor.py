@@ -2,8 +2,7 @@ import os
 import platform
 import pygame
 import csv
-import Game.button as button
-import pickle
+import button
 
 pygame.init()
 
@@ -18,13 +17,14 @@ SIDE_MARGIN = 300
 
 screen = pygame.display.set_mode(
     (SCREEN_WIDTH + SIDE_MARGIN, SCREEN_HEIGHT + LOWER_MARGIN))
-pygame.display.set_caption('Person Shooter Level Editor')
+pygame.display.set_caption('PyShooter Level Editor')
 
 # Game Variables
 ROWS = 16
 MAX_COLS = 150
 TILE_SIZE = SCREEN_HEIGHT // ROWS
 TILE_TYPES = 21
+
 level = 0
 current_tile = 0
 scroll_left = False
@@ -33,20 +33,24 @@ scroll = 0
 scroll_speed = 1
 
 # Images
-DIRECTORY_ASSETS = "PyShooter/src/Game/assets/"
-pine1_img = pygame.image.load(DIRECTORY_ASSETS + 'img/background/pine1.png').convert_alpha()
-pine2_img = pygame.image.load(DIRECTORY_ASSETS + 'img/background/pine2.png').convert_alpha()
-mountain_img = pygame.image.load(DIRECTORY_ASSETS + 'img/background/mountain.png').convert_alpha()
-sky_img = pygame.image.load(DIRECTORY_ASSETS + 'img/background/sky_cloud.png').convert_alpha()
-# Tile Imagers
+DIRECTORY_ASSETS: str = os.getcwd() + "/src/assets/"
+DIRECTORY_LEVELS: str = os.getcwd() + "/levels"
+pine1_img = pygame.image.load(DIRECTORY_ASSETS + 'img/background/pine1.png')
+pine2_img = pygame.image.load(DIRECTORY_ASSETS + 'img/background/pine2.png')
+mountain_img = pygame.image.load(DIRECTORY_ASSETS + 'img/background/mountain.png')
+sky_img = pygame.image.load(DIRECTORY_ASSETS + 'img/background/sky_cloud.png')
+# Tile Images
 img_list = []
 for x in range(TILE_TYPES):
-    img = pygame.image.load(DIRECTORY_ASSETS + f'img/tile/{x}.png').convert_alpha()
+    img = pygame.image.load(DIRECTORY_ASSETS + f'img/tile/{x}.png')
     img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
     img_list.append(img)
 
-save_img = pygame.image.load(DIRECTORY_ASSETS + 'img/save_btn.png').convert_alpha()
-load_img = pygame.image.load(DIRECTORY_ASSETS + 'img/load_btn.png').convert_alpha()
+icon_img = pygame.image.load(DIRECTORY_ASSETS + f'img/tile/20.png')
+pygame.display.set_icon(icon_img)
+
+save_img = pygame.image.load(DIRECTORY_ASSETS + 'img/save_btn.png')
+load_img = pygame.image.load(DIRECTORY_ASSETS + 'img/load_btn.png')
 
 # Colours
 GREEN = (144, 201, 120)
@@ -130,6 +134,7 @@ for i in range(len(img_list)):
         button_row += 1
         button_col = 0
 
+print(f'[EditorManager] Running...')
 run = True
 while run:
 
@@ -147,27 +152,21 @@ while run:
     # save and load data
     if save_button.draw(screen):
         # save level data
-        with open(f'PyShooter/level{level}_data.csv', 'w', newline='') as csvfile:
+        with open(f'{DIRECTORY_LEVELS}/level{level}_data.csv', 'w', newline='') as csvfile:
             writer = csv.writer(csvfile, delimiter=',')
             for row in world_data:
                 writer.writerow(row)
-        # alternative pickle method
-        # pickle_out = open(f'level{level}_data', 'wb')
-        # pickle.dump(world_data, pickle_out)
-        # pickle_out.close()
+        print(f'[EditorManager] Saved Level {level} successfully!')
     if load_button.draw(screen):
         # load in level data
         # reset scroll back to the start of the level
         scroll = 0
-        with open(f'PyShooter/level{level}_data.csv', newline='') as csvfile:
+        with open(f'{DIRECTORY_LEVELS}/level{level}_data.csv', newline='') as csvfile:
             reader = csv.reader(csvfile, delimiter=',')
             for x, row in enumerate(reader):
                 for y, tile in enumerate(row):
                     world_data[x][y] = int(tile)
-        # alternative pickle method
-        # world_data = []
-        # pickle_in = open(f'level{level}_data', 'rb')
-        # world_data = pickle.load(pickle_in)
+        print(f'[EditorManager] Loaded Level {level} successfully!')
 
     # draw tile panel and tiles
     pygame.draw.rect(screen, GREEN, (SCREEN_WIDTH,

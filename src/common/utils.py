@@ -4,8 +4,8 @@ import os
 from pygame import Surface
 from typing import Tuple, List
 
-from Game.common import BG, DIRECTORY_ASSETS, SCREEN_HEIGHT, sky_img, mountain_img, pine1_img, pine2_img
-
+from common.config import BG, DIRECTORY_ASSETS, SCREEN_HEIGHT, DIRECTORY_LEVELS
+from common.sprites import sky_img, mountain_img, pine1_img, pine2_img
 
 def load_animation(scale: float, char_type: str, animation: str) -> List[Surface]:
     animation_list: List[Surface] = []
@@ -19,7 +19,7 @@ def load_animation(scale: float, char_type: str, animation: str) -> List[Surface
 
 def load_level(level: int, data: List[int]):
     world_data = data
-    with open(f'level{level}_data.csv', newline='') as csvfile:
+    with open(f'{DIRECTORY_LEVELS}/level{level}_data.csv', newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         for x, row in enumerate(reader):
             for y, tile in enumerate(row):
