@@ -5,7 +5,7 @@ from typing import Tuple
 
 # Game Configuration
 FPS: int = INFINITY * INFINITY
-ADMIN = True
+ADMIN = False
 SCREEN_WIDTH: float = 800
 SCREEN_HEIGHT: float = SCREEN_WIDTH * 0.8
 GAME_TITLE: str = "PyShooter"
