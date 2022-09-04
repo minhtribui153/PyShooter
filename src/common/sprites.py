@@ -7,6 +7,7 @@ exit_img = pygame.image.load(DIRECTORY_ASSETS + "img/exit_btn.png")
 restart_img = pygame.image.load(DIRECTORY_ASSETS + "img/restart_btn.png")
 resume_img = pygame.image.load(DIRECTORY_ASSETS + "img/resume_btn.png")
 settings_img = pygame.image.load(DIRECTORY_ASSETS + "img/settings_btn.png")
+back_img = pygame.image.load(DIRECTORY_ASSETS + "img/back_btn.png")
 off_img = pygame.image.load(DIRECTORY_ASSETS + "img/switch_false.png")
 on_img = pygame.image.load(DIRECTORY_ASSETS + "img/switch_true.png")
 # Background

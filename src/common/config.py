@@ -15,7 +15,7 @@ PLAYER_JUMP_VEL: int = 11
 
 
 # Projectile Cooldown Configuration
-BULLET_COOLDOWN = 10
+BULLET_COOLDOWN = 5
 
 # Projectile Damage Configuration
 PLAYER_DAMAGE = 25

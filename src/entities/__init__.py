@@ -7,7 +7,7 @@ from pygame import Surface, Rect
 from pygame.sprite import Group
 from typing import Tuple, List
 from common.utils import load_animation
-from common import Button, jump_fx, off_img, on_img, GRAVITY, PLAYER_JUMP_VEL, BULLET_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
+from common import Button, jump_fx, off_img, on_img, collide_water_fx, fall_fx, GRAVITY, PLAYER_JUMP_VEL, BULLET_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
 
 class SwitchButton():
     off_button: Button
@@ -141,7 +141,9 @@ class Soldier(pygame.sprite.Sprite):
                     dy = tile[1].top - self.rect.bottom
 
         # Check for collision with water
-        if pygame.sprite.spritecollide(self, water_group, False): self.health = 0
+        if pygame.sprite.spritecollide(self, water_group, False):
+            self.health = 0
+            collide_water_fx.play()
 
         # Check for collision with exit
         level_complete = False
@@ -150,6 +152,7 @@ class Soldier(pygame.sprite.Sprite):
         # Check if fallen of map
         if self.rect.bottom > SCREEN_HEIGHT:
             self.health = 0
+            fall_fx.play()
 
         # Check if going off edges of screen
         if self.char_type == 'player':

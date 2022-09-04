@@ -59,7 +59,7 @@ class GameManager:
     def run(self):
         global start_game, level, pause_game, bg_scroll, screen_scroll, shoot, bullet_group, shot_fx, \
               grenade, grenade_thrown, screen_scroll, level_complete, moving_left, moving_right, \
-              score_database, update_console_cooldown
+              score_database, update_console_cooldown, show_settings_menu, show_fps
         print('[GameManager] Running...')
         while self.running:
             clock.tick(FPS)
@@ -72,10 +72,9 @@ class GameManager:
             if (MAX_LEVELS == 0):
                 draw_text("No Levels found", font, WHITE, SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT / 2)
                 draw_text("Please build your own level with level_editor.py", font, WHITE, SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 + 30)
-            elif not start_game:
-                start_game, start_intro = show_start_menu(self.exit_game)
-            elif pause_game:
-                self.player, self.health_bar, self.world, self.world_data, pause_game = show_pause_menu(self.exit_game, self.world, self.world_data, self.player, self.health_bar)
+            elif show_settings_menu: show_settings_menu, show_fps = show_settings(show_settings_menu, show_fps)
+            elif not start_game: start_game, start_intro, show_settings_menu = show_start_menu(self.exit_game, show_settings_menu)
+            elif pause_game: self.player, self.health_bar, self.world, self.world_data, pause_game = show_pause_menu(self.exit_game, self.world, self.world_data, self.player, self.health_bar)
             else:
                 update_player(font, self.player, self.world, bg_scroll, screen_scroll, self.health_bar)
 
@@ -132,7 +131,7 @@ class GameManager:
                                 if restart_button.draw(screen):
                                     bg_scroll = 0
                                     screen_scroll = 0
-                                    level = 1
+                                    level += 1
                                     self.world_data = reset_level()
                                     self.world_data = load_level(level, self.world_data)
                                     self.world = World()
@@ -156,7 +155,7 @@ class GameManager:
                             start_intro = True
             update_console_cooldown -= 1
             
-            draw_text(f"FPS: {round(clock.get_fps())}", font, WHITE, SCREEN_WIDTH - 110, 25)
+            if show_fps: draw_text(f"FPS: {round(clock.get_fps())}", font, WHITE, SCREEN_WIDTH - 110, 25)
 
             self.listen_events()
 

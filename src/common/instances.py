@@ -17,15 +17,21 @@ pygame.display.set_icon(enemy_dead)
 screen: Surface = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Load music and sounds
+pygame.mixer.set_num_channels(100)
 pygame.mixer.music.load(DIRECTORY_ASSETS + 'audio/music2.mp3')
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1, 0.0, 5000)
 jump_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/jump.wav')
-shot_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/shot.wav')
+shot_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/shot2.wav')
 grenade_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/grenade.wav')
+collide_water_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/collide_water.wav')
+fall_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/fall.wav')
+
 jump_fx.set_volume(0.7)
 shot_fx.set_volume(0.7)
 grenade_fx.set_volume(0.7)
+collide_water_fx.set_volume(0.7)
+fall_fx.set_volume(0.7)
 
 # Buttons
 start_button = Button(SCREEN_WIDTH // 2 - 130, SCREEN_HEIGHT // 2 - 150, start_img, 1)
@@ -34,8 +40,6 @@ exit_button = Button(SCREEN_WIDTH // 2 - 110, SCREEN_HEIGHT // 2 + 50, exit_img,
 exit_2_button = Button(SCREEN_WIDTH // 2 - 60, SCREEN_HEIGHT // 2 + 50, exit_img, 0.65)
 restart_button = Button(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 - 50, restart_img, 2)
 settings_button = Button(10, 10, settings_img, 0.35)
-
-switch_button = SwitchButton(10, 70, off_img, on_img, 0.1, False)
 
 # Screen Fade
 death_fade = ScreenFade(2, PINK, 4, SCREEN_WIDTH, SCREEN_HEIGHT)

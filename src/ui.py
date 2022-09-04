@@ -5,8 +5,11 @@ from tqdm import tqdm
 import time
 
 # Game Settings
-show_settings = False
+show_settings_menu = False
 show_fps = False
+
+switch_button = SwitchButton(SCREEN_WIDTH - 100, 80, off_img, on_img, 0.1)
+back_btn = Button(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 120, back_img, 0.7)
 
 test = False
 def show_loading_assets():
@@ -31,8 +34,8 @@ def show_loading_levels():
 show_loading_assets()
 show_loading_levels()
 
-def show_start_menu(exit_game):
-    global test, show_fps
+
+def show_start_menu(exit_game, show_settings_menu):
     start_game = False
     start_intro = False
     screen.fill(BG)
@@ -42,12 +45,15 @@ def show_start_menu(exit_game):
         start_game = True
         start_intro = True
     if exit_button.draw(screen): exit_game()
-    #if settings_button.draw(screen): print("Working")
+    if settings_button.draw(screen) and not show_settings_menu: show_settings_menu = True
+    return start_game, start_intro, show_settings_menu
 
-    # if switch_button.draw(screen):
-    #     show_fps = not show_fps
-    #     print(show_fps)
-    return start_game, start_intro
+def show_settings(show_settings_menu, show_fps):
+    screen.fill(BG)
+    draw_text("Show Frame Per Second (FPS)", font, WHITE, 25, 80)
+    if switch_button.draw(screen): show_fps = not show_fps
+    if back_btn.draw(screen): show_settings_menu = False
+    return show_settings_menu, show_fps
 
 def show_pause_menu(exit_game, world, world_data, player, health_bar):
     global screen, bg_scroll, start_intro, enemy_group, item_box_group, decoration_group, water_group, exit_group
@@ -70,5 +76,5 @@ def show_pause_menu(exit_game, world, world_data, player, health_bar):
         pause_game = False
         start_intro = True
     elif exit_2_button.draw(screen): exit_game()
-    #elif settings_button.draw(screen): print("Working")
+    elif settings_button.draw(screen): print("Working")
     return player, health_bar, world, world_data, pause_game
