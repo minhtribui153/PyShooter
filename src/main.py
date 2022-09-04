@@ -1,6 +1,4 @@
 from ui import *
-from sys import platform
-from progress.bar import Bar
 
 level_complete = False
 update_console_cooldown = 0
@@ -18,10 +16,11 @@ class GameManager:
         self.player: Soldier = None
         self.health_bar: HealthBar = None
         self.world: World = None
+        self.level = 1
 
         if MAX_LEVELS > 0:
             # Load in level data and create world
-            self.world_data = load_level(level, self.world_data)
+            self.world_data = load_level(self.level, self.world_data)
 
             self.world = World()
             self.player, self.health_bar = self.world.process_data(screen, self.world_data, enemy_group, item_box_group, decoration_group, water_group, exit_group)
@@ -57,7 +56,7 @@ class GameManager:
                     grenade_thrown = False
 
     def run(self):
-        global start_game, level, pause_game, bg_scroll, screen_scroll, shoot, bullet_group, shot_fx, \
+        global start_game, pause_game, bg_scroll, screen_scroll, shoot, bullet_group, shot_fx, \
               grenade, grenade_thrown, screen_scroll, level_complete, moving_left, moving_right, \
               score_database, update_console_cooldown, show_settings_menu, show_fps
         print('[GameManager] Running...')
@@ -67,14 +66,14 @@ class GameManager:
 
             if update_console_cooldown == 0:
                 update_console_cooldown = 11
-                if start_game: show_console_information(level, level_complete, pause_game, self.player, score_database)
+                if start_game: show_console_information(self.level, level_complete, pause_game, self.player, score_database)
 
             if (MAX_LEVELS == 0):
                 draw_text("No Levels found", font, WHITE, SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT / 2)
                 draw_text("Please build your own level with level_editor.py", font, WHITE, SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 + 30)
             elif show_settings_menu: show_settings_menu, show_fps = show_settings(show_settings_menu, show_fps)
             elif not start_game: start_game, start_intro, show_settings_menu = show_start_menu(self.exit_game, show_settings_menu)
-            elif pause_game: self.player, self.health_bar, self.world, self.world_data, pause_game = show_pause_menu(self.exit_game, self.world, self.world_data, self.player, self.health_bar)
+            elif pause_game: self.player, self.health_bar, self.world, self.world_data, pause_game, self.level = show_pause_menu(self.exit_game, self.world, self.world_data, self.player, self.health_bar, self.level)
             else:
                 update_player(font, self.player, self.world, bg_scroll, screen_scroll, self.health_bar)
 
@@ -115,13 +114,14 @@ class GameManager:
                     bg_scroll -= screen_scroll
                     # Check if self.player completed level
                     if level_complete:
-                        if level <= MAX_LEVELS:
+                        if self.level <= MAX_LEVELS:
+                            self.level += 1
                             score_database += self.player.score
                             start_intro = True
                             screen_scroll = 0
                             bg_scroll = 0
                             self.world_data = reset_level()
-                            self.world_data = load_level(level, self.world_data)
+                            self.world_data = load_level(self.level, self.world_data)
                             self.world = World()
                             self.player, self.health_bar = self.world.process_data(screen, self.world_data, enemy_group, item_box_group,
                                                                     decoration_group, water_group,
@@ -131,9 +131,9 @@ class GameManager:
                                 if restart_button.draw(screen):
                                     bg_scroll = 0
                                     screen_scroll = 0
-                                    level += 1
+                                    self.level = 1
                                     self.world_data = reset_level()
-                                    self.world_data = load_level(level, self.world_data)
+                                    self.world_data = load_level(self.level, self.world_data)
                                     self.world = World()
                                     self.player, self.health_bar = self.world.process_data(screen, self.world_data, enemy_group, item_box_group,
                                                                             decoration_group, water_group, exit_group)
@@ -147,7 +147,7 @@ class GameManager:
                             bg_scroll = 0
                             death_fade.fade_counter = 0
                             self.world_data = reset_level()
-                            self.world_data = load_level(level, self.world_data)
+                            self.world_data = load_level(self.level, self.world_data)
                             self.world = World()
                             self.player, self.health_bar = self.world.process_data(screen, self.world_data, enemy_group, item_box_group,
                                                                     decoration_group, water_group,

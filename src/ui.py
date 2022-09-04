@@ -16,7 +16,7 @@ def show_loading_assets():
     files_array = count_every_assets()
     for i in tqdm(range(len(files_array)), 
                 desc="[GameManager] Loading assets", 
-                ascii=False, ncols=100):
+                ascii=False, ncols=100, unit="mb"):
         if (files_array[i].endswith("wav") or files_array[i].endswith("mp3")):
             pygame.mixer.Sound(files_array[i])
         elif (files_array[i].endswith("png")):
@@ -28,7 +28,7 @@ def show_loading_levels():
     if (max_levels == 0): return print("[GameManager] Loading levels: No Levels Found")
     for i in tqdm(range(MAX_LEVELS), 
                 desc="[GameManager] Loading levels", 
-                ascii=False, ncols=100):
+                ascii=False, ncols=100, unit="frame"):
         time.sleep(0.5)
 
 show_loading_assets()
@@ -41,7 +41,6 @@ def show_start_menu(exit_game, show_settings_menu):
     screen.fill(BG)
     # Add buttons
     if start_button.draw(screen):
-        print(f'[GameManager] Level {level} activated')
         start_game = True
         start_intro = True
     if exit_button.draw(screen): exit_game()
@@ -55,7 +54,7 @@ def show_settings(show_settings_menu, show_fps):
     if back_btn.draw(screen): show_settings_menu = False
     return show_settings_menu, show_fps
 
-def show_pause_menu(exit_game, world, world_data, player, health_bar):
+def show_pause_menu(exit_game, world, world_data, player, health_bar, current_level):
     global screen, bg_scroll, start_intro, enemy_group, item_box_group, decoration_group, water_group, exit_group
     pause_game = True
     # Draw Menu
@@ -66,15 +65,14 @@ def show_pause_menu(exit_game, world, world_data, player, health_bar):
         bg_scroll = 0
         death_fade.fade_counter = 0
         world_data = reset_level()
-        world_data = load_level(level, world_data)
+        world_data = load_level(current_level, world_data)
         world = World()
         player, health_bar = world.process_data(screen, world_data, enemy_group, item_box_group,
         decoration_group, water_group,
         exit_group)
-        print(f'[GameManager] Level {level} reactivated')
         intro_fade.fade_counter = 0
         pause_game = False
         start_intro = True
     elif exit_2_button.draw(screen): exit_game()
     elif settings_button.draw(screen): print("Working")
-    return player, health_bar, world, world_data, pause_game
+    return player, health_bar, world, world_data, pause_game, current_level

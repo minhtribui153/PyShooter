@@ -1,6 +1,6 @@
 import pygame
 
-from common import item_boxes
+from common import item_boxes, equip_fx
 from pygame.surface import Surface
 from common.config import TILE_SIZE
 
@@ -50,6 +50,7 @@ class ItemBox(pygame.sprite.Sprite):
         if player.alive: self.rect.x += screen_scroll
         # Check if player has picked up box
         if pygame.sprite.collide_rect(self, player):
+            equip_fx.play()
             # Check what kind of box it was
             if self.item_type == "Health":
                 player.health += 40

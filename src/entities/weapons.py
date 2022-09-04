@@ -2,13 +2,13 @@ import pygame
 
 from pygame.sprite import Group
 from entities.projectiles import Explosion
-from common import TILE_SIZE, GRAVITY, grenade_img
+from common import TILE_SIZE, GRAVITY, GRENADE_TIMER, grenade_img
 
 class Grenade(pygame.sprite.Sprite):
     def __init__(self, x: float, y: float, direction: int):
         pygame.sprite.Sprite.__init__(self)
         # Grenade Configuration
-        self.timer = 95
+        self.timer = GRENADE_TIMER
         self.vel_y = -11
         self.speed = 7
         self.image = grenade_img

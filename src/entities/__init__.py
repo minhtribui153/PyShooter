@@ -7,7 +7,7 @@ from pygame import Surface, Rect
 from pygame.sprite import Group
 from typing import Tuple, List
 from common.utils import load_animation
-from common import Button, jump_fx, off_img, on_img, collide_water_fx, fall_fx, GRAVITY, PLAYER_JUMP_VEL, BULLET_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
+from common import Button, jump_fx, off_img, on_img, collide_water_fx, fall_fx, HEALTH_DYNAMIC_COOLDOWN, GRAVITY, PLAYER_JUMP_VEL, BULLET_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
 
 class SwitchButton():
     off_button: Button
@@ -49,6 +49,7 @@ class Soldier(pygame.sprite.Sprite):
         self.grenades = grenades
         self.shoot_cooldown: float = 0
         self.health: int = 100
+        self.current_health: int = 100
         self.max_health: int = self.health
         self.direction: int = 1
         self.jump: bool = False
@@ -239,7 +240,11 @@ class Soldier(pygame.sprite.Sprite):
 
         # Update cooldown
         if self.shoot_cooldown > 0: self.shoot_cooldown -= 1
-        ratio = self.health / self.max_health
+        # Calculate health ratio
+        if (self.health - self.current_health) < 0: self.current_health -= HEALTH_DYNAMIC_COOLDOWN
+        elif (self.health - self.current_health) > 0: self.current_health += HEALTH_DYNAMIC_COOLDOWN
+        ratio = self.current_health / self.max_health
+
         if self.char_type == "enemy" and self.enemy_healthbar:
             pygame.draw.rect(screen, BLACK, (self.rect.centerx - 52, self.rect.centery - 42, 90, 20))
             pygame.draw.rect(screen, RED, (self.rect.centerx - 50, self.rect.centery - 40, 85, 15))
@@ -294,13 +299,16 @@ class HealthBar:
         self.x = x
         self.y = y
         self.health = health
+        self.current_health = health
         self.max_health = max_health
 
     def draw(self, screen: Surface, health: float):
         # Update with new health
         self.health = health
         # Calculate health ratio
-        ratio = self.health / self.max_health
+        if (self.health - self.current_health) < 0: self.current_health -= HEALTH_DYNAMIC_COOLDOWN
+        elif (self.health - self.current_health) > 0: self.current_health += HEALTH_DYNAMIC_COOLDOWN
+        ratio = self.current_health / self.max_health
         pygame.draw.rect(screen, BLACK, (self.x - 2, self.y - 2, 154, 24))
         pygame.draw.rect(screen, RED, (self.x, self.y, 150, 20))
         pygame.draw.rect(screen, GREEN, (self.x, self.y, 150 * ratio, 20))

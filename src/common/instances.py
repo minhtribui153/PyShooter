@@ -26,11 +26,13 @@ shot_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/shot2.wav')
 grenade_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/grenade.wav')
 collide_water_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/collide_water.wav')
 fall_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/fall.wav')
+equip_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/equip.wav')
 
 jump_fx.set_volume(0.7)
 shot_fx.set_volume(0.7)
 grenade_fx.set_volume(0.7)
 collide_water_fx.set_volume(0.7)
+equip_fx.set_volume(0.7)
 fall_fx.set_volume(0.7)
 
 # Buttons

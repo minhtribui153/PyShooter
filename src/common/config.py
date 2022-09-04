@@ -12,18 +12,20 @@ DIRECTORY_MAIN: str = os.getcwd()
 DIRECTORY_ASSETS: str = DIRECTORY_MAIN + "/src/assets/"
 DIRECTORY_LEVELS: str = DIRECTORY_MAIN + "/levels"
 PLAYER_JUMP_VEL: int = 11
+HEALTH_DYNAMIC_COOLDOWN: int = 5
 
 
-# Projectile Cooldown Configuration
-BULLET_COOLDOWN = 5
+# Projectile Configuration
+GRENADE_TIMER: int  = 100
+BULLET_COOLDOWN: int  = 5
 
 # Projectile Damage Configuration
-PLAYER_DAMAGE = 25
-ENEMY_DAMAGE = 10
+PLAYER_DAMAGE: int  = 20
+ENEMY_DAMAGE: int  = 10
 
 # World Configuration 
 GRAVITY: float = 0.75
-SCROLL_THRESH = 150
+SCROLL_THRESH: int = 150
 ROWS = 16
 COLS = 150
 TILE_SIZE = SCREEN_HEIGHT // ROWS

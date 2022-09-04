@@ -4,7 +4,6 @@ start_game = False
 pause_game = False
 screen_scroll = 0
 bg_scroll = 0
-level = 1
 start_intro = False
 
 # Player Action Variables
