@@ -1,1 +1,4 @@
 pygame~=2.1.2
+tabulate~=0.8.10
+progress~=1.6
+tqdm~=4.64.0

@@ -7,8 +7,29 @@ from pygame import Surface, Rect
 from pygame.sprite import Group
 from typing import Tuple, List
 from common.utils import load_animation
-from common import GRAVITY, PLAYER_JUMP_VEL, SCREEN_WIDTH, ADMIN, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
+from common import Button, jump_fx, off_img, on_img, GRAVITY, PLAYER_JUMP_VEL, BULLET_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
 
+class SwitchButton():
+    off_button: Button
+    on_button: Button
+    toggled: bool
+    pressed: bool
+
+    def __init__(self, x, y, scale):
+        self.off_button = Button(x, y, off_img, scale)
+        self.on_button = Button(x, y, on_img, scale)
+        self.toggled = False
+        self.pressed = False
+    
+    def draw(self, screen: Surface):
+        if self.toggled and self.on_button.draw(screen):
+            self.toggled = False
+            return True
+        elif self.off_button.draw(screen):
+            self.toggled = True
+            return True
+        return False
+        
 
 class Soldier(pygame.sprite.Sprite):
     def __init__(self, screen: Surface, char_type: str, x: float, y: float, scale: float, speed: float, ammo: int,
@@ -87,6 +108,7 @@ class Soldier(pygame.sprite.Sprite):
 
         # Jump
         if self.jump and not self.in_air:
+            jump_fx.play()
             self.vel_y = -PLAYER_JUMP_VEL
             self.jump = False
             self.in_air = True
@@ -151,9 +173,7 @@ class Soldier(pygame.sprite.Sprite):
     def shoot(self, bullet_group: Group, shot_fx):
         if self.shoot_cooldown == 0 and self.ammo > 0:
             self.shot = True
-            if self.char_type == 'player' and ADMIN:
-                self.shoot_cooldown = 1
-            else: self.shoot_cooldown = 7
+            self.shoot_cooldown = BULLET_COOLDOWN
             x = self.rect.centerx + (0.75 * self.rect.size[0] * self.direction)
             y = self.rect.centery
             bullet = Bullet(x, y, self.direction)
@@ -169,7 +189,7 @@ class Soldier(pygame.sprite.Sprite):
                 self.idling = True
                 self.idling_counter = 50
             # Check if AI is near player
-            if self.vision.colliderect(player.rect):
+            if self.vision.colliderect(player.rect) and not self.rect.colliderect(player.rect):
                 self.update_action(ActionType.IDLE)
                 # Shoot
                 self.shoot(bullet_group, shot_fx)
@@ -184,12 +204,11 @@ class Soldier(pygame.sprite.Sprite):
                 self.move_counter += 1
 
                 # Update AI vision as the enemy moves
-                self.vision.center = (self.rect.centerx + 70 * self.direction, self.rect.centery)
+                self.vision.center = (self.rect.centerx + 75 * self.direction, self.rect.centery)
+
                 if self.move_counter > TILE_SIZE - 1:
                     self.direction *= -1
                     self.move_counter *= -1
-                
-                if ADMIN: pygame.draw.rect(screen, RED, self.vision)
             else:
                 self.idling_counter -= 1
                 if self.idling_counter <= 0:
@@ -210,6 +229,7 @@ class Soldier(pygame.sprite.Sprite):
 
     def update(self, screen: Surface, player):
         # Update checking
+        self.update_direction()
         self.update_animation()
         self.check_alive(player)
         self.update_shoot()
@@ -221,6 +241,10 @@ class Soldier(pygame.sprite.Sprite):
             pygame.draw.rect(screen, BLACK, (self.rect.centerx - 52, self.rect.centery - 42, 90, 20))
             pygame.draw.rect(screen, RED, (self.rect.centerx - 50, self.rect.centery - 40, 85, 15))
             pygame.draw.rect(screen, GREEN, (self.rect.centerx - 50, self.rect.centery - 40, 85 * ratio, 15))
+    
+    def update_direction(self):
+        if (self.direction == 1): self.flip = False
+        else: self.flip = True
 
     def update_animation(self):
         # Updates Animation
@@ -277,3 +301,4 @@ class HealthBar:
         pygame.draw.rect(screen, BLACK, (self.x - 2, self.y - 2, 154, 24))
         pygame.draw.rect(screen, RED, (self.x, self.y, 150, 20))
         pygame.draw.rect(screen, GREEN, (self.x, self.y, 150 * ratio, 20))
+

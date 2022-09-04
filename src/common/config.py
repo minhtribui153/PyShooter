@@ -5,15 +5,20 @@ from typing import Tuple
 
 # Game Configuration
 FPS: int = INFINITY * INFINITY
-ADMIN = False
 SCREEN_WIDTH: float = 800
 SCREEN_HEIGHT: float = SCREEN_WIDTH * 0.8
 GAME_TITLE: str = "PyShooter"
 DIRECTORY_MAIN: str = os.getcwd()
 DIRECTORY_ASSETS: str = DIRECTORY_MAIN + "/src/assets/"
 DIRECTORY_LEVELS: str = DIRECTORY_MAIN + "/levels"
-PLAYER_DAMAGE = 25
 PLAYER_JUMP_VEL: int = 11
+
+
+# Projectile Cooldown Configuration
+BULLET_COOLDOWN = 10
+
+# Projectile Damage Configuration
+PLAYER_DAMAGE = 25
 ENEMY_DAMAGE = 10
 
 # World Configuration 

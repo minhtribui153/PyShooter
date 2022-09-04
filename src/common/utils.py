@@ -1,10 +1,13 @@
 import csv
 import pygame
 import os
+from sys import platform
 from pygame import Surface
+from tabulate import tabulate
 from typing import Tuple, List
+from progress.bar import Bar
 
-from common.config import BG, DIRECTORY_ASSETS, SCREEN_HEIGHT, DIRECTORY_LEVELS
+from common.config import BG, DIRECTORY_ASSETS, SCREEN_HEIGHT, DIRECTORY_LEVELS, GREEN
 from common.sprites import sky_img, mountain_img, pine1_img, pine2_img
 
 def load_animation(scale: float, char_type: str, animation: str) -> List[Surface]:
@@ -16,6 +19,24 @@ def load_animation(scale: float, char_type: str, animation: str) -> List[Surface
         animation_list.append(img)
     return animation_list
 
+def show_console_information(level, level_complete, pause_game, player, score_database):
+    clear_console()
+    print("------------------------------")
+    with Bar(f"Health", color="green", fill="▣", empty_fill = '▢', suffix=f"{player.health}", width=20) as bar:
+        bar.index = player.health - 1
+        bar.next()
+    print("------------------------------")
+
+    print("-------  --------  ------  ----------  -------------  -------------")
+    print(tabulate(
+        [ 
+            [level, show_player_alive(player.alive, level_complete, pause_game), player.ammo, player.grenades, player.score, score_database + player.score]
+        ],
+        headers=["Level", "Status", "Ammo", "Grenades", "Level Score", "Total Score"],
+        tablefmt='simple'
+    ))
+    print("-------  --------  ------  ----------  -------------  -------------")
+
 
 def load_level(level: int, data: List[int]):
     world_data = data
@@ -26,6 +47,29 @@ def load_level(level: int, data: List[int]):
                 world_data[x][y] = int(tile)
     return world_data
 
+def show_player_alive(alive: bool, complete: bool, paused: bool) -> str:
+    if paused: return "PAUSED"
+    elif alive: return "ALIVE"
+    elif alive and complete: return "COMPLETED"
+    else: return "DEAD"
+
+def clear_console():
+    if platform == "win32": os.system("cls")
+    else: os.system("clear")
+
+def count_every_assets(default_path: str = DIRECTORY_ASSETS) -> List[str]:
+    assets_dir_files: List[str] = [];
+    # Iterate directory
+    for path in os.listdir(default_path):
+        # check if current path is a file
+        if os.path.isdir(f"{default_path}/{path}"):
+            new_list = []
+            new_list.extend(assets_dir_files)
+            new_list.extend(count_every_assets(f"{default_path}/{path}"))
+            assets_dir_files = new_list
+            continue
+        else: assets_dir_files.append(f"{default_path}/{path}");
+    return assets_dir_files
 
 
 def load_explosion_animation(scale: float) -> List[Surface]:
@@ -46,7 +90,6 @@ def draw_bg(screen: Surface, bg_scroll):
         screen.blit(mountain_img, ((x * width) - bg_scroll * 0.6, SCREEN_HEIGHT - mountain_img.get_height() - 275))
         screen.blit(pine1_img, ((x * width) - bg_scroll * 0.7, SCREEN_HEIGHT - mountain_img.get_height() - 145))
         screen.blit(pine2_img, ((x * width) - bg_scroll * 0.8, SCREEN_HEIGHT - mountain_img.get_height() - 25))
-
 
 def scale_image(image: Surface, scale: float) -> Surface:
     """Resizes image by a factor of input arg `scale`."""

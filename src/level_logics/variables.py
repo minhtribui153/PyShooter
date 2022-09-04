@@ -6,7 +6,7 @@ screen_scroll = 0
 bg_scroll = 0
 level = 1
 start_intro = False
-print_counter = 0
+
 # Player Action Variables
 moving_left: bool = False
 moving_right: bool = False

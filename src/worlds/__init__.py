@@ -18,9 +18,6 @@ class World:
     def process_data(self, screen: Surface, data, enemy_group: Group, item_box_group: Group, decoration_group: Group,
                      water_group: Group, exit_group: Group):
         self.level_length = len(data[0])
-        default_ammo = 20
-        default_grenade = 5
-        if ADMIN: default_ammo = default_grenade = 10000
         # Iterate through each value in level data file
         for y, row in enumerate(data):
             for x, tile in enumerate(row):
@@ -39,7 +36,7 @@ class World:
                         decoration = Decoration(img, x * TILE_SIZE, y * TILE_SIZE)
                         decoration_group.add(decoration)
                     elif tile == 15:  # Create player
-                        player = Soldier(screen, 'player', x * TILE_SIZE, y * TILE_SIZE, 1.65, 5, default_ammo, default_grenade)
+                        player = Soldier(screen, 'player', x * TILE_SIZE, y * TILE_SIZE, 1.65, 5, 20, 5)
                         health_bar = HealthBar(10, 10, player.health, player.max_health)
                     elif tile == 16:  # Create enemy
                         enemy = Soldier(screen, 'enemy', x * TILE_SIZE, y * TILE_SIZE, 1.65, 2, 30)

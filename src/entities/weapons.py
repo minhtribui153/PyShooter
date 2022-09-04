@@ -2,7 +2,7 @@ import pygame
 
 from pygame.sprite import Group
 from entities.projectiles import Explosion
-from common import TILE_SIZE, GRAVITY, ADMIN, grenade_img
+from common import TILE_SIZE, GRAVITY, grenade_img
 
 class Grenade(pygame.sprite.Sprite):
     def __init__(self, x: float, y: float, direction: int):
@@ -55,8 +55,7 @@ class Grenade(pygame.sprite.Sprite):
             # Do damage to anyone that is nearby
             if abs(self.rect.centerx - player.rect.centerx) < TILE_SIZE * 2 and \
                     abs(self.rect.centery - player.rect.centery) < TILE_SIZE * 2:
-                if ADMIN: player.health -= 1
-                else: player.health -= 50
+                player.health -= 50
 
             for enemy in enemy_group:
                 if abs(self.rect.centerx - enemy.rect.centerx) < TILE_SIZE * 2 and \

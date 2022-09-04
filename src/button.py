@@ -30,3 +30,37 @@ class Button:
         surface.blit(self.image, (self.rect.x, self.rect.y))
 
         return action
+
+class SwitchButton():
+    off_button: Button
+    on_button: Button
+    cooldown: int
+    max_cooldown: int
+    toggled: bool
+    ready: bool
+    pressed: bool
+
+    def __init__(self, x, y, off_img, on_img, scale, default = False):
+        self.off_button = Button(x, y, off_img, scale)
+        self.on_button = Button(x, y, on_img, scale)
+        self.toggled = default
+        self.pressed = False
+        self.ready = False
+        self.cooldown = 0
+        self.max_cooldown = 20
+    
+    def draw(self, screen):
+
+        if not pygame.mouse.get_pressed()[0]: self.ready = True
+
+        if self.toggled:
+            if self.on_button.draw(screen) and self.ready:
+                self.toggled = False
+                self.ready = False
+                return True
+        else:
+            if self.off_button.draw(screen) and self.ready:
+                self.toggled = True
+                self.ready = False
+                return True
+        return False

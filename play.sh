@@ -5,13 +5,13 @@ then
 fi
 
 clear
-echo =======================
-echo Installing Dependencies
-echo =======================
-pip3 install -r requirements.txt
+echo "───────────────────────────"
+echo "| Installing Dependencies |"
+echo "───────────────────────────"
+pip3 install -r requirements.txt 
 
 clear
-echo =====================
-echo Welcome to PyShooter!
-echo =====================
+echo "────────────────────────"
+echo "| Welcome to PyShooter |"
+echo "────────────────────────"
 python3 src/main.py

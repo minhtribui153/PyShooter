@@ -3,7 +3,7 @@ import pygame
 from pygame.sprite import Group
 from pygame.surface import Surface
 from pygame.rect import Rect
-from common import SCREEN_WIDTH, ADMIN, ENEMY_DAMAGE, PLAYER_DAMAGE, bullet_img
+from common import SCREEN_WIDTH, ENEMY_DAMAGE, PLAYER_DAMAGE, bullet_img
 from common.utils import load_explosion_animation
 
 class Bullet(pygame.sprite.Sprite):
@@ -36,8 +36,7 @@ class Bullet(pygame.sprite.Sprite):
         # Check collision with characters
         if pygame.sprite.spritecollide(player, bullet_group, False):
             if player.alive:
-                if ADMIN: player.health -= 1
-                else: player.health -= ENEMY_DAMAGE
+                player.health -= ENEMY_DAMAGE
                 self.kill()
 
         for enemy in enemy_group:
