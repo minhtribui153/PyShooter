@@ -198,7 +198,12 @@ class Soldier(pygame.sprite.Sprite):
                 # Shoot
                 self.shoot(bullet_group, shot_fx)
             # Checks if enemy's health is lost
-            elif self.current_health != self.health and not self.vision.colliderect(player.rect) and player.direction == self.direction: self.direction = -1
+            elif self.current_health != self.health and not self.vision.colliderect(player.rect) and player.direction == self.direction:
+                self.direction *= -1
+                # Stop Idling, if have
+                self.idling = False
+                # Change back move counter (We don't want the AI to fall of course)
+                self.move_counter *= -1
             elif not self.idling:
                 if self.direction == 1:
                     ai_moving_right = True
