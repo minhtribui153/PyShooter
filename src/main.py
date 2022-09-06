@@ -73,7 +73,7 @@ class GameManager:
                 draw_text("Please build your own level with level_editor.py", font, WHITE, SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 + 30)
             elif show_settings_menu: show_settings_menu, show_fps = show_settings(show_settings_menu, show_fps)
             elif not start_game: start_game, start_intro, show_settings_menu = show_start_menu(self.exit_game, show_settings_menu)
-            elif pause_game: self.player, self.health_bar, self.world, self.world_data, pause_game, self.level = show_pause_menu(self.exit_game, self.world, self.world_data, self.player, self.health_bar, self.level)
+            elif pause_game: show_settings_menu, self.player, self.health_bar, self.world, self.world_data, pause_game, self.level = show_pause_menu(show_settings_menu, self.exit_game, self.world, self.world_data, self.player, self.health_bar, self.level)
             else:
                 update_player(font, self.player, self.world, bg_scroll, screen_scroll, self.health_bar)
 
@@ -105,16 +105,22 @@ class GameManager:
 			
                         grenade_thrown = True
                     # Jump
-                    if self.player.in_air: self.player.update_action(ActionType.JUMP)
+                    if self.player.in_air:
+                        if walking_fx.get_num_channels() > 0: walking_fx.stop()
+                        self.player.update_action(ActionType.JUMP)
                     # Move
-                    elif moving_left or moving_right: self.player.update_action(ActionType.RUN)
+                    elif moving_left or moving_right:
+                        if walking_fx.get_num_channels() == 0: walking_fx.play()
+                        self.player.update_action(ActionType.RUN)
                     # Idle
-                    else: self.player.update_action(ActionType.IDLE)
+                    else:
+                        if walking_fx.get_num_channels() > 0: walking_fx.stop()
+                        self.player.update_action(ActionType.IDLE)
                     screen_scroll, level_complete = self.player.move(self.world, moving_left, moving_right, bg_scroll, water_group, exit_group)
                     bg_scroll -= screen_scroll
                     # Check if self.player completed level
                     if level_complete:
-                        if self.level <= MAX_LEVELS:
+                        if self.level < MAX_LEVELS:
                             self.level += 1
                             score_database += self.player.score
                             start_intro = True

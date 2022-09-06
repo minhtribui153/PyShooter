@@ -7,7 +7,7 @@ from pygame import Surface, Rect
 from pygame.sprite import Group
 from typing import Tuple, List
 from common.utils import load_animation
-from common import Button, jump_fx, off_img, on_img, collide_water_fx, fall_fx, HEALTH_DYNAMIC_COOLDOWN, GRAVITY, PLAYER_JUMP_VEL, BULLET_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
+from common import Button, jump_fx, off_img, on_img, collide_water_fx, fall_fx, walking_fx, HEALTH_DYNAMIC_COOLDOWN, GRAVITY, PLAYER_JUMP_VEL, BULLET_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
 
 class SwitchButton():
     off_button: Button
@@ -171,7 +171,7 @@ class Soldier(pygame.sprite.Sprite):
                     or (self.rect.left < SCROLL_THRESH and bg_scroll > abs(dx)):
                 self.rect.x -= dx
                 screen_scroll = -dx
-
+        if dy > 1: walking_fx.stop()
         return screen_scroll, level_complete
 
     def shoot(self, bullet_group: Group, shot_fx):
@@ -197,6 +197,8 @@ class Soldier(pygame.sprite.Sprite):
                 self.update_action(ActionType.IDLE)
                 # Shoot
                 self.shoot(bullet_group, shot_fx)
+            # Checks if enemy's health is lost
+            elif self.current_health != self.health and not self.vision.colliderect(player.rect) and player.direction == self.direction: self.direction = -1
             elif not self.idling:
                 if self.direction == 1:
                     ai_moving_right = True
@@ -280,6 +282,7 @@ class Soldier(pygame.sprite.Sprite):
 
     def check_alive(self, player):
         if self.health <= 0:
+            if self.char_type == 'player' and walking_fx.get_num_channels() > 0: walking_fx.stop()
             if self.char_type == 'enemy':
                 if not self.player_already_received_point:
                     player.score += 1

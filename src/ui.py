@@ -54,14 +54,14 @@ def show_settings(show_settings_menu, show_fps):
     if back_btn.draw(screen): show_settings_menu = False
     return show_settings_menu, show_fps
 
-def show_pause_menu(exit_game, world, world_data, player, health_bar, current_level):
+def show_pause_menu(show_settings_menu, exit_game, world, world_data, player, health_bar, current_level):
     global screen, bg_scroll, start_intro, enemy_group, item_box_group, decoration_group, water_group, exit_group
     pause_game = True
     # Draw Menu
     screen.fill(BG)
     # Add buttons
     if resume_button.draw(screen): pause_game = False
-    elif restart_button.draw(screen):
+    if restart_button.draw(screen):
         bg_scroll = 0
         death_fade.fade_counter = 0
         world_data = reset_level()
@@ -73,6 +73,6 @@ def show_pause_menu(exit_game, world, world_data, player, health_bar, current_le
         intro_fade.fade_counter = 0
         pause_game = False
         start_intro = True
-    elif exit_2_button.draw(screen): exit_game()
-    elif settings_button.draw(screen): print("Working")
-    return player, health_bar, world, world_data, pause_game, current_level
+    if exit_2_button.draw(screen): exit_game()
+    if settings_button.draw(screen) and not show_settings_menu: show_settings_menu = True
+    return show_settings_menu, player, health_bar, world, world_data, pause_game, current_level

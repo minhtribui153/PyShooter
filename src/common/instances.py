@@ -27,13 +27,15 @@ grenade_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/grenade.wav')
 collide_water_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/collide_water.wav')
 fall_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/fall.wav')
 equip_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/equip.wav')
+walking_fx = pygame.mixer.Sound(DIRECTORY_ASSETS + 'audio/walking.wav')
 
 jump_fx.set_volume(0.7)
 shot_fx.set_volume(0.7)
 grenade_fx.set_volume(0.7)
 collide_water_fx.set_volume(0.7)
-equip_fx.set_volume(0.7)
+equip_fx.set_volume(1)
 fall_fx.set_volume(0.7)
+walking_fx.set_volume(0.5)
 
 # Buttons
 start_button = Button(SCREEN_WIDTH // 2 - 130, SCREEN_HEIGHT // 2 - 150, start_img, 1)
