@@ -1,6 +1,8 @@
 import csv
 import pygame
 import os
+import math
+
 from sys import platform
 from pygame import Surface
 from tabulate import tabulate
@@ -18,6 +20,34 @@ def load_animation(scale: float, char_type: str, animation: str) -> List[Surface
         img = scale_image(img, scale)
         animation_list.append(img)
     return animation_list
+
+def rect_distance(rect1, rect2):
+    x1, y1 = rect1.topleft
+    x1b, y1b = rect1.bottomright
+    x2, y2 = rect2.topleft
+    x2b, y2b = rect2.bottomright
+    left = x2b < x1
+    right = x1b < x2
+    top = y2b < y1
+    bottom = y1b < y2
+    if bottom and left:
+        return 'bottom left', math.hypot(x2b-x1, y2-y1b)
+    elif left and top:
+        return 'top left', math.hypot(x2b-x1, y2b-y1)
+    elif top and right:
+        return 'top right', math.hypot(x2-x1b, y2b-y1)
+    elif right and bottom:
+        return 'bottom right', math.hypot(x2-x1b, y2-y1b)
+    elif left:
+        return 'left', x1 - x2b
+    elif right:
+        return 'right', x2 - x1b
+    elif top:
+        return 'top', y1 - y2b
+    elif bottom:
+        return 'bottom', y2 - y1b
+    else:  # rectangles intersect
+        return 'intersection', 0.
 
 def show_console_information(level, level_complete, pause_game, player, score_database):
     clear_console()

@@ -15,7 +15,7 @@ class Bullet(pygame.sprite.Sprite):
     def __init__(self, x: float, y: float, direction: int):
         pygame.sprite.Sprite.__init__(self)
         # Bullet Configuration
-        self.speed = 15
+        self.speed = 20
         self.image = bullet_img
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)

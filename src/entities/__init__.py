@@ -1,3 +1,4 @@
+from xml.etree.ElementInclude import include
 import pygame
 import random
 
@@ -6,7 +7,7 @@ from entities.weapons import *
 from pygame import Surface, Rect
 from pygame.sprite import Group
 from typing import Tuple, List
-from common.utils import load_animation
+from common.utils import load_animation, rect_distance
 from common import Button, jump_fx, off_img, on_img, collide_water_fx, fall_fx, walking_fx, HEALTH_DYNAMIC_COOLDOWN, GRAVITY, PLAYER_JUMP_VEL, BULLET_COOLDOWN, SCREEN_WIDTH, SCREEN_HEIGHT, SCROLL_THRESH, TILE_SIZE, RED, GREEN, BLACK, muzzle_flash_img, ActionType
 
 class SwitchButton():
@@ -74,6 +75,7 @@ class Soldier(pygame.sprite.Sprite):
         self.vision = pygame.Rect(0, 0, 180, 15)
         self.idling = False
         self.idling_counter = 0
+        self.player_detected = False
 
         # Load all animations for the player
         animation_types: List[str] = ['Idle', 'Run', 'Jump', 'Death']
@@ -185,25 +187,34 @@ class Soldier(pygame.sprite.Sprite):
             # Reduce ammo
             self.ammo -= 1
             shot_fx.play()
+    
+    def idle_ai(self, counter: int = 50):
+        self.update_action(ActionType.IDLE)
+        self.idling = True
+        self.idling_counter = counter
 
     def ai(self, world, player, bullet_group: Group, screen_scroll, bg_scroll, water_group, exit_group, shot_fx, screen):
         if self.alive and player.alive:
-            if not self.idling and random.randint(1, 200) == 1:
-                self.update_action(ActionType.IDLE)
-                self.idling = True
-                self.idling_counter = 50
+            direction, distance = rect_distance(self.rect, player.rect)
+            if not self.idling and random.randint(1, 200) == 1: self.idle_ai()
             # Check if AI is near player
+            if self.player_detected and not self.vision.colliderect(player.rect): self.player_detected = False
             if self.vision.colliderect(player.rect) and not self.rect.colliderect(player.rect):
                 self.update_action(ActionType.IDLE)
                 # Shoot
                 self.shoot(bullet_group, shot_fx)
             # Checks if enemy's health is lost
-            elif self.current_health != self.health and not self.vision.colliderect(player.rect) and player.direction == self.direction:
-                self.direction *= -1
-                # Stop Idling, if have
-                self.idling = False
-                # Change back move counter (We don't want the AI to fall of course)
-                self.move_counter *= -1
+            elif self.health > 0 and self.current_health != self.health and not self.vision.colliderect(player.rect):
+                if (direction == "left" or direction == "top left" or direction == "bottom left") and self.direction != -1 and not self.player_detected:
+                    self.player_detected = True
+                    self.direction = -1
+                    self.move_counter *= -1
+                elif (direction == "right" or direction == "top right" or direction == "bottom right") and self.direction != 1 and not self.player_detected:
+                    self.player_detected = True
+                    self.direction = 1
+                    self.move_counter *= -1
+                else: self.player_detected = False
+                self.idle_ai(1)
             elif not self.idling:
                 if self.direction == 1:
                     ai_moving_right = True

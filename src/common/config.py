@@ -17,7 +17,7 @@ HEALTH_DYNAMIC_COOLDOWN: int = 5
 
 # Projectile Configuration
 GRENADE_TIMER: int  = 100
-BULLET_COOLDOWN: int  = 5
+BULLET_COOLDOWN: int  = 6
 
 # Projectile Damage Configuration
 PLAYER_DAMAGE: int  = 20
