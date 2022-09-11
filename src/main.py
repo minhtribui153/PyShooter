@@ -38,27 +38,28 @@ class GameManager:
             # Keyboard Controls
             # Presses
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_a: moving_left = True
-                if event.key == pygame.K_d: moving_right = True
-                if event.key == pygame.K_SPACE: shoot = True
-                if event.key == pygame.K_q: grenade = True
-                if event.key == pygame.K_w and self.player.alive: self.player.jump = True
-                if event.key == pygame.K_ESCAPE:
+                if is_key(event, pygame.K_a) or is_key(event, pygame.K_LEFT): moving_left = True
+                if is_key(event, pygame.K_d) or is_key(event, pygame.K_RIGHT): moving_right = True
+                if is_key(event, pygame.K_SPACE): shoot = True
+                if is_key(event, pygame.K_q): grenade = True
+                if (is_key(event, pygame.K_w) or is_key(event, pygame.K_UP)) and self.player.alive: self.player.jump = True
+                if is_key(event, pygame.K_ESCAPE):
                     if (self.player.alive and start_game): pause_game = not pause_game
             # Releases
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a: moving_left = False
-                if event.key == pygame.K_d: moving_right = False
-                if event.key == pygame.K_SPACE: shoot = False
-                if event.key == pygame.K_w or event.key == pygame.K_SPACE: self.player.jump = False
-                if event.key == pygame.K_q:
+                if is_key(event, pygame.K_a) or is_key(event, pygame.K_LEFT): moving_left = False
+                if is_key(event, pygame.K_d) or is_key(event, pygame.K_RIGHT): moving_right = False
+                if is_key(event, pygame.K_SPACE): shoot = False
+                if is_key(event, pygame.K_q):
                     grenade = False
                     grenade_thrown = False
+                if (is_key(event, pygame.K_w) or is_key(event, pygame.K_UP)) and self.player.alive: self.player.jump = False
 
     def run(self):
         global start_game, pause_game, bg_scroll, screen_scroll, shoot, bullet_group, shot_fx, \
               grenade, grenade_thrown, screen_scroll, level_complete, moving_left, moving_right, \
-              score_database, update_console_cooldown, show_settings_menu, show_fps
+              score_database, update_console_cooldown, show_settings_menu, show_fps, show_enemy_healthbar, \
+              intro_fade
         print('[GameManager] Running...')
         while self.running:
             clock.tick(FPS)
@@ -71,15 +72,15 @@ class GameManager:
             if (MAX_LEVELS == 0):
                 draw_text("No Levels found", font, WHITE, SCREEN_WIDTH / 2 - 70, SCREEN_HEIGHT / 2)
                 draw_text("Please build your own level with level_editor.py", font, WHITE, SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 + 30)
-            elif show_settings_menu: show_settings_menu, show_fps = show_settings(show_settings_menu, show_fps)
+            elif show_settings_menu: show_settings_menu, show_fps, show_enemy_healthbar = show_settings(show_settings_menu, show_fps, show_enemy_healthbar)
             elif not start_game: start_game, start_intro, show_settings_menu = show_start_menu(self.exit_game, show_settings_menu)
-            elif pause_game: show_settings_menu, self.player, self.health_bar, self.world, self.world_data, pause_game, self.level = show_pause_menu(show_settings_menu, self.exit_game, self.world, self.world_data, self.player, self.health_bar, self.level)
+            elif pause_game: show_settings_menu, self.player, self.health_bar, self.world, self.world_data, pause_game, self.level, intro_fade = show_pause_menu(show_settings_menu, self.exit_game, self.world, self.world_data, self.player, self.health_bar, self.level, intro_fade)
             else:
-                update_player(font, self.player, self.world, bg_scroll, screen_scroll, self.health_bar)
+                update_player(font, self.player, self.world, bg_scroll, screen_scroll, self.health_bar, show_enemy_healthbar)
 
                 for enemy in enemy_group:
                     enemy.ai(self.world, self.player, bullet_group, screen_scroll, bg_scroll, water_group, exit_group, shot_fx, screen)
-                    enemy.update(screen, self.player)
+                    enemy.update(screen, self.player, show_enemy_healthbar)
                     enemy.draw()
 
                 update_pygame_groups(screen, self.world, self.player, screen_scroll, grenade_fx)

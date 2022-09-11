@@ -110,6 +110,7 @@ def load_explosion_animation(scale: float) -> List[Surface]:
         explosion_images.append(img)
     return explosion_images
 
+def is_key(event, key: int): return event.key == key
 
 def draw_bg(screen: Surface, bg_scroll):
     """Draws the background"""

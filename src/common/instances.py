@@ -57,7 +57,7 @@ def draw_text(text, font_to_render: Font, text_col: Tuple[int, int, int], x, y):
     img = font_to_render.render(text, True, text_col)
     screen.blit(img, (x, y))
 
-def update_player(font: Font, player, world, bg_scroll, screen_scroll, health_bar):
+def update_player(font: Font, player, world, bg_scroll, screen_scroll, health_bar, show_enemy_healthbar):
     # Update Background
     draw_bg(screen, bg_scroll)
     # Draw world map
@@ -78,5 +78,5 @@ def update_player(font: Font, player, world, bg_scroll, screen_scroll, health_ba
     draw_text(f"{player.score}", font, WHITE, SCREEN_WIDTH / 2, 15)
 
     # Update and Draw player
-    player.update(screen, player)
+    player.update(screen, player, show_enemy_healthbar)
     player.draw()

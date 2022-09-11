@@ -194,11 +194,28 @@ class Soldier(pygame.sprite.Sprite):
         self.idling_counter = counter
 
     def ai(self, world, player, bullet_group: Group, screen_scroll, bg_scroll, water_group, exit_group, shot_fx, screen):
+        # Update AI vision as the enemy moves
+        self.vision.center = (self.rect.centerx + 75 * self.direction, self.rect.centery)
         if self.alive and player.alive:
             direction, distance = rect_distance(self.rect, player.rect)
             if not self.idling and random.randint(1, 200) == 1: self.idle_ai()
             # Check if AI is near player
-            if self.player_detected and not self.vision.colliderect(player.rect): self.player_detected = False
+            if self.player_detected and not self.vision.colliderect(player.rect) and distance > 5: self.player_detected = False
+            if distance <= 5 and not "top" in direction and not "bottom" in direction:
+                if "left" in direction:
+                    self.player_detected = True
+                    self.direction = -1
+                    self.move_counter *= -1
+                    self.update_action(ActionType.IDLE)
+                    # Shoot
+                    self.shoot(bullet_group, shot_fx)
+                elif "right" in direction:
+                    self.player_detected = True
+                    self.direction = 1
+                    self.move_counter *= -1
+                    self.update_action(ActionType.IDLE)
+                    # Shoot
+                    self.shoot(bullet_group, shot_fx)
             if self.vision.colliderect(player.rect) and not self.rect.colliderect(player.rect):
                 self.update_action(ActionType.IDLE)
                 # Shoot
@@ -225,9 +242,6 @@ class Soldier(pygame.sprite.Sprite):
                 self.update_action(ActionType.RUN)
                 self.move_counter += 1
 
-                # Update AI vision as the enemy moves
-                self.vision.center = (self.rect.centerx + 75 * self.direction, self.rect.centery)
-
                 if self.move_counter > TILE_SIZE - 1:
                     self.direction *= -1
                     self.move_counter *= -1
@@ -249,7 +263,7 @@ class Soldier(pygame.sprite.Sprite):
         if self.shoot_cooldown == 0: self.shot = False
         if self.shot: self.screen.blit(shoot_img, self.shoot_img_rect)
 
-    def update(self, screen: Surface, player):
+    def update(self, screen: Surface, player, show_enemy_healthbar):
         # Update checking
         self.update_direction()
         self.update_animation()
@@ -262,7 +276,8 @@ class Soldier(pygame.sprite.Sprite):
         if (self.health - self.current_health) < 0: self.current_health -= HEALTH_DYNAMIC_COOLDOWN
         elif (self.health - self.current_health) > 0: self.current_health += HEALTH_DYNAMIC_COOLDOWN
         ratio = self.current_health / self.max_health
-
+        self.enemy_healthbar = show_enemy_healthbar
+        if self.current_health <= 0: self.enemy_healthbar = False
         if self.char_type == "enemy" and self.enemy_healthbar:
             pygame.draw.rect(screen, BLACK, (self.rect.centerx - 52, self.rect.centery - 42, 90, 20))
             pygame.draw.rect(screen, RED, (self.rect.centerx - 50, self.rect.centery - 40, 85, 15))
@@ -303,7 +318,6 @@ class Soldier(pygame.sprite.Sprite):
                 if not self.player_already_received_point:
                     player.score += 1
                     self.player_already_received_point = True
-            self.enemy_healthbar = False
             self.health = 0
             self.speed = 0
             self.alive = False

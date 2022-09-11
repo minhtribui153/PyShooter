@@ -21,7 +21,7 @@ BULLET_COOLDOWN: int  = 6
 
 # Projectile Damage Configuration
 PLAYER_DAMAGE: int  = 20
-ENEMY_DAMAGE: int  = 10
+ENEMY_DAMAGE: int  = 5
 
 # World Configuration 
 GRAVITY: float = 0.75
