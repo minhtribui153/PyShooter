@@ -74,7 +74,7 @@ class GameManager:
     def run(self):
         global start_game, pause_game, bg_scroll, screen_scroll, shoot, bullet_group, shot_fx, \
               grenade, grenade_thrown, level_complete, moving_left, moving_right, \
-              score_database, update_console_cooldown, show_settings_menu, show_fps, show_enemy_healthbar
+              score_database, update_console_cooldown, show_settings_menu, show_fps, show_enemy_healthbar, intro_fade
         print('[GameManager] Running...')
         while self.running:
             clock.tick(FPS)
@@ -89,7 +89,7 @@ class GameManager:
                 draw_text("Please build your own level with level_editor.py", font, WHITE, SCREEN_WIDTH / 2 - 200, SCREEN_HEIGHT / 2 + 30)
             elif show_settings_menu: show_settings_menu, show_fps, show_enemy_healthbar = show_settings(show_settings_menu, show_fps, show_enemy_healthbar)
             elif not start_game: start_game, start_intro, show_settings_menu = show_start_menu(self.exit_game, show_settings_menu)
-            elif pause_game: show_settings_menu, self.player, self.health_bar, self.world, self.world_data, pause_game, self.level, start_intro = show_pause_menu(show_settings_menu, self.exit_game, self.world, self.world_data, self.player, self.health_bar, self.level, start_intro)
+            elif pause_game: show_settings_menu, self.player, self.health_bar, self.world, self.world_data, pause_game, self.level, intro_fade = show_pause_menu(show_settings_menu, self.exit_game, self.world, self.world_data, self.player, self.health_bar, self.level, intro_fade)
             else:
                 update_player(font, self.player, self.world, bg_scroll, screen_scroll, self.health_bar, show_enemy_healthbar)
 

@@ -39,7 +39,7 @@ def show_settings(show_settings_menu, show_fps, show_enemy_healthbar):
     return show_settings_menu, show_fps, show_enemy_healthbar
 
 def show_pause_menu(show_settings_menu, exit_game, world, world_data, player, health_bar, current_level, intro_fade: ScreenFade):
-    global screen, bg_scroll, start_intro, enemy_group, item_box_group, decoration_group, water_group, exit_group
+    global screen, bg_scroll, start_intro, enemy_group, item_box_group, decoration_group, water_group, exit_group, screen_scroll
     pause_game = True
     # Draw Menu
     screen.fill(BG)
@@ -47,7 +47,6 @@ def show_pause_menu(show_settings_menu, exit_game, world, world_data, player, he
     if resume_button.draw(screen): pause_game = False
     if restart_button.draw(screen):
         bg_scroll = 0
-        death_fade.fade_counter = 0
         world_data = reset_level()
         world_data = load_level(current_level, world_data)
         world = World()

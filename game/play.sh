@@ -14,4 +14,4 @@ clear
 echo "────────────────────────"
 echo "| Welcome to PyShooter |"
 echo "────────────────────────"
-python3 src/main.py
+python3 ./src/main.py
