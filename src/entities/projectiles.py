@@ -1,4 +1,5 @@
 import pygame
+import random
 
 from pygame.sprite import Group
 from pygame.surface import Surface
@@ -8,17 +9,19 @@ from common.utils import load_explosion_animation
 
 class Bullet(pygame.sprite.Sprite):
     speed: float
+    shot_from: str
     image: Surface
     rect: Rect
     direction: int
 
-    def __init__(self, x: float, y: float, direction: int):
+    def __init__(self, x: float, y: float, direction: int, shot_from = "player"):
         pygame.sprite.Sprite.__init__(self)
         # Bullet Configuration
         self.speed = 20
         self.image = bullet_img
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+        self.shot_from = shot_from
         self.direction = direction
 
     def update(self, world, player, enemy_group: Group, bullet_group: Group, screen_scroll):
@@ -35,15 +38,16 @@ class Bullet(pygame.sprite.Sprite):
 
         # Check collision with characters
         if pygame.sprite.spritecollide(player, bullet_group, False):
-            if player.alive:
+            if player.alive and self.shot_from == "enemy" and random.randint(0, 10) == 0:
                 player.health -= ENEMY_DAMAGE
                 self.kill()
 
         for enemy in enemy_group:
             if pygame.sprite.spritecollide(enemy, bullet_group, False):
                 if enemy.alive:
-                    enemy.health -= PLAYER_DAMAGE
-                    self.kill()
+                    if self.shot_from == "player":
+                        enemy.health -= PLAYER_DAMAGE
+                        self.kill()
 
 class Explosion(pygame.sprite.Sprite):
     def __init__(self, x: float, y: float, scale: float):

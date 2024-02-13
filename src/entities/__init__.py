@@ -70,6 +70,7 @@ class Soldier(pygame.sprite.Sprite):
         self.enemy_healthbar = True
 
         # Configuration - Enemy
+        self.exited_intersection = True
         self.player_already_received_point = False
         self.move_counter = 0
         self.vision = pygame.Rect(0, 0, 180, 15)
@@ -182,7 +183,7 @@ class Soldier(pygame.sprite.Sprite):
             self.shoot_cooldown = BULLET_COOLDOWN
             x = self.rect.centerx + (0.75 * self.rect.size[0] * self.direction)
             y = self.rect.centery
-            bullet = Bullet(x, y, self.direction)
+            bullet = Bullet(x, y, self.direction, self.char_type)
             bullet_group.add(bullet)
             # Reduce ammo
             self.ammo -= 1
@@ -192,6 +193,17 @@ class Soldier(pygame.sprite.Sprite):
         self.update_action(ActionType.IDLE)
         self.idling = True
         self.idling_counter = counter
+    
+    def change_ai_direction(self, direction: int):
+        self.player_detected = True
+        self.direction = direction
+        if (direction < 0 and not direction < 0) or (direction > 0 and not direction > 0): self.move_counter *= -1
+    
+    def ai_shoot(self, bullet_group, shot_fx):
+        self.update_action(ActionType.IDLE)
+        # Shoot
+        self.shoot(bullet_group, shot_fx)
+
 
     def ai(self, world, player, bullet_group: Group, screen_scroll, bg_scroll, water_group, exit_group, shot_fx, screen):
         # Update AI vision as the enemy moves
@@ -203,23 +215,17 @@ class Soldier(pygame.sprite.Sprite):
             if self.player_detected and not self.vision.colliderect(player.rect) and distance > 5: self.player_detected = False
             if distance <= 5 and not "top" in direction and not "bottom" in direction:
                 if "left" in direction:
-                    self.player_detected = True
-                    self.direction = -1
-                    self.move_counter *= -1
-                    self.update_action(ActionType.IDLE)
-                    # Shoot
-                    self.shoot(bullet_group, shot_fx)
+                    self.change_ai_direction(-1)
+                    self.ai_shoot(bullet_group, shot_fx)
                 elif "right" in direction:
-                    self.player_detected = True
-                    self.direction = 1
-                    self.move_counter *= -1
-                    self.update_action(ActionType.IDLE)
-                    # Shoot
-                    self.shoot(bullet_group, shot_fx)
-            if self.vision.colliderect(player.rect) and not self.rect.colliderect(player.rect):
-                self.update_action(ActionType.IDLE)
-                # Shoot
-                self.shoot(bullet_group, shot_fx)
+                    self.change_ai_direction(1)
+                    self.ai_shoot(bullet_group, shot_fx)
+                elif "intersection" in direction:
+                    if self.exited_intersection:
+                        self.exited_intersection = False
+                        self.idle_ai(1)
+                elif not "intersection" in direction: self.exited_intersection = True
+            if self.vision.colliderect(player.rect) and not self.rect.colliderect(player.rect): self.ai_shoot(bullet_group, shot_fx)
             # Checks if enemy's health is lost
             elif self.health > 0 and self.current_health != self.health and not self.vision.colliderect(player.rect):
                 if (direction == "left" or direction == "top left" or direction == "bottom left") and self.direction != -1 and not self.player_detected:

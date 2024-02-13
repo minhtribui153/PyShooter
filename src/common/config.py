@@ -4,7 +4,7 @@ import os
 from typing import Tuple
 
 # Game Configuration
-FPS: int = INFINITY * INFINITY
+FPS: int = 30
 SCREEN_WIDTH: float = 800
 SCREEN_HEIGHT: float = SCREEN_WIDTH * 0.8
 GAME_TITLE: str = "PyShooter"
@@ -20,8 +20,8 @@ GRENADE_TIMER: int  = 100
 BULLET_COOLDOWN: int  = 6
 
 # Projectile Damage Configuration
-PLAYER_DAMAGE: int  = 20
-ENEMY_DAMAGE: int  = 5
+PLAYER_DAMAGE: int  = 25
+ENEMY_DAMAGE: int  = 10
 
 # World Configuration 
 GRAVITY: float = 0.75

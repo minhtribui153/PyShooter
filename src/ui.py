@@ -15,27 +15,6 @@ enemy_healthbar_switch_button = SwitchButton(SCREEN_WIDTH - 100, 120, off_img, o
 back_btn = Button(SCREEN_WIDTH / 2 - 80, SCREEN_HEIGHT - 120, back_img, 0.7)
 
 test = False
-def show_loading_assets():
-    files_array = count_every_assets()
-    for i in tqdm(range(len(files_array)), 
-                desc="[GameManager] Loading assets", 
-                ascii=False, ncols=100, unit="mb"):
-        if (files_array[i].endswith("wav") or files_array[i].endswith("mp3")):
-            pygame.mixer.Sound(files_array[i])
-        elif (files_array[i].endswith("png")):
-            pygame.image.load(files_array[i])
-        time.sleep(0.05)
-
-def show_loading_levels():
-    max_levels = MAX_LEVELS
-    if (max_levels == 0): return print("[GameManager] Loading levels: No Levels Found")
-    for i in tqdm(range(MAX_LEVELS), 
-                desc="[GameManager] Loading levels", 
-                ascii=False, ncols=100, unit="frame"):
-        time.sleep(0.5)
-
-show_loading_assets()
-show_loading_levels()
 
 
 def show_start_menu(exit_game, show_settings_menu):
